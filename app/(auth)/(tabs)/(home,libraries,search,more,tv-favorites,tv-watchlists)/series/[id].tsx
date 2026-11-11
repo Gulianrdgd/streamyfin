@@ -15,6 +15,7 @@ import {
 } from "@/components/common/HeaderButton";
 import { HeaderIcon } from "@/components/common/HeaderIcon";
 import { Image } from "@/components/common/ServerImage";
+import { DeleteFromServerButton } from "@/components/DeleteFromServerButton";
 import { DownloadItems } from "@/components/DownloadItem";
 import { ParallaxScrollView } from "@/components/ParallaxPage";
 import { SimilarItems } from "@/components/SimilarItems";
@@ -183,6 +184,9 @@ const page: React.FC = () => {
                 MissingDownloadIconComponent={SingleItemDownloadIcon}
                 DownloadedIconComponent={SingleItemDownloadedIcon}
               />
+            )}
+            {!Platform.isTV && !isOffline && (
+              <DeleteFromServerButton item={item} />
             )}
           </HeaderButtonGroup>
         ) : null,
