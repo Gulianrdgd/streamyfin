@@ -1,3 +1,48 @@
+diff --git a/android/src/main/java/com/reactnative/googlecast/RNGCExpandedControllerActivity.java b/android/src/main/java/com/reactnative/googlecast/RNGCExpandedControllerActivity.java
+index 5291345..5ea12d4 100644
+--- a/android/src/main/java/com/reactnative/googlecast/RNGCExpandedControllerActivity.java
++++ b/android/src/main/java/com/reactnative/googlecast/RNGCExpandedControllerActivity.java
+@@ -1,6 +1,11 @@
+ package com.reactnative.googlecast;
+ 
++import android.graphics.Insets;
++import android.os.Build;
++import android.os.Bundle;
+ import android.view.Menu;
++import android.view.View;
++import android.view.WindowInsets;
+ 
+ import com.google.android.gms.cast.framework.CastButtonFactory;
+ import com.google.android.gms.cast.framework.media.widget.ExpandedControllerActivity;
+@@ -8,6 +13,28 @@ import com.google.android.gms.cast.framework.media.widget.ExpandedControllerActi
+ public class RNGCExpandedControllerActivity
+   extends ExpandedControllerActivity {
+ 
++  @Override
++  protected void onCreate(Bundle savedInstanceState) {
++    super.onCreate(savedInstanceState);
++
++    // From Android 15 an app targeting SDK 35 or later is drawn edge to edge,
++    // and the Cast SDK's layout does not apply the window insets: its toolbar
++    // went under the status bar and the camera cutout, and the seek bar and
++    // buttons under the navigation bar. The content is kept inside the bars.
++    if (Build.VERSION.SDK_INT < 35) return;
++
++    View content = findViewById(android.R.id.content);
++    if (content == null) return;
++
++    content.setOnApplyWindowInsetsListener((view, insets) -> {
++      Insets bars = insets.getInsets(
++        WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout());
++      view.setPadding(bars.left, bars.top, bars.right, bars.bottom);
++      return WindowInsets.CONSUMED;
++    });
++    content.requestApplyInsets();
++  }
++
+   @Override
+   public boolean onCreateOptionsMenu(Menu menu) {
+     super.onCreateOptionsMenu(menu);
 diff --git a/lib/commonjs/api/useCastDevice.js b/lib/commonjs/api/useCastDevice.js
 index 974a2f0fbfcb5e2d306be8172ae1a8e02c6a6673..a83f363a06ef7f3bf5e7eda3aa8893972000c427 100644
 --- a/lib/commonjs/api/useCastDevice.js

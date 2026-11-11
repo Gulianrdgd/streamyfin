@@ -176,3 +176,30 @@ describe.each(["src", "lib/commonjs"])(
     });
   },
 );
+
+// The same patch keeps Android's expanded controls inside the system bars. An
+// app targeting SDK 35+ is drawn edge to edge from Android 15 on, and the Cast
+// SDK's activity does not apply the insets: its toolbar sat under the status
+// bar and its buttons under the navigation bar. Native code has no Jest run,
+// so this pins the patched source instead of its behaviour.
+describe("expanded controls window insets", () => {
+  const source = () =>
+    require("node:fs").readFileSync(
+      require.resolve(
+        "react-native-google-cast/android/src/main/java/com/reactnative/googlecast/RNGCExpandedControllerActivity.java",
+      ),
+      "utf8",
+    ) as string;
+
+  it("pads the content by the system bars and the display cutout", () => {
+    const java = source();
+
+    expect(java).toContain("setOnApplyWindowInsetsListener");
+    expect(java).toContain(
+      "WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout()",
+    );
+    expect(java).toContain(
+      "view.setPadding(bars.left, bars.top, bars.right, bars.bottom)",
+    );
+  });
+});
