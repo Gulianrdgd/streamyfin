@@ -42,8 +42,21 @@ export function Chromecast(props: Props) {
 
   return (
     <HeaderButton
-      onPress={() => {
-        if (mediaStatus?.currentItemId) CastContext.showExpandedControls();
+      onPress={async () => {
+        if (mediaStatus?.currentItemId) {
+          CastContext.showExpandedControls();
+          return;
+        }
+        // The status the phone holds can be one from before the TV loaded
+        // what it plays now. Asked fresh, a cast that plays opens its
+        // controls rather than the device list.
+        const current = client
+          ? await client
+              .requestStatus()
+              .then(() => client.getMediaStatus())
+              .catch(() => null)
+          : null;
+        if (current?.currentItemId) CastContext.showExpandedControls();
         else CastContext.showCastDialog();
       }}
       {...props}
