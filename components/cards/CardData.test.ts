@@ -275,3 +275,40 @@ describe("buildItemCards live badge", () => {
     expect(liveOf({ Type: "Movie", IsLive: true })).toBe(false);
   });
 });
+
+describe("buildItemCards watched state", () => {
+  const cardOf = (item: BaseItemDto) =>
+    buildItemCards([{ Id: "item-1", ...item }], { api, kind: "portrait" })[0];
+
+  test.each(["Movie", "Episode", "Series", "Season", "BoxSet"] as const)(
+    "marks a played %s as watched",
+    (Type) => {
+      expect(
+        cardOf({ Type, UserData: { Key: "user-data", Played: true } }).watched,
+      ).toBe(true);
+    },
+  );
+
+  test("leaves an item that is not played, or has no watch state, unmarked", () => {
+    expect(
+      cardOf({ Type: "Movie", UserData: { Key: "user-data", Played: false } })
+        .watched,
+    ).toBe(false);
+    expect(cardOf({ Type: "Movie" }).watched).toBe(false);
+  });
+
+  // An album or a playlist is "played" once each track was; a checkmark on it
+  // would claim it was watched.
+  test("does not mark music or folders", () => {
+    expect(
+      cardOf({
+        Type: "MusicAlbum",
+        UserData: { Key: "user-data", Played: true },
+      }).watched,
+    ).toBe(false);
+    expect(
+      cardOf({ Type: "Folder", UserData: { Key: "user-data", Played: true } })
+        .watched,
+    ).toBe(false);
+  });
+});

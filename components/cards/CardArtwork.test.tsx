@@ -64,3 +64,26 @@ describe("CardArtwork corner badge", () => {
     expect(screen.getByText("3")).toBeTruthy();
   });
 });
+
+// Watched items only lacked the unwatched dot, which on a row of posters was
+// hard to tell apart from an item with no watch state at all.
+describe("CardArtwork watched mark", () => {
+  test("marks a watched item with a checkmark", async () => {
+    await renderArtwork({ watched: true });
+
+    expect(screen.getByLabelText("item_card.watched")).toBeTruthy();
+  });
+
+  test("leaves an unwatched item without it", async () => {
+    await renderArtwork({ watched: false, unwatched: true });
+
+    expect(screen.queryByLabelText("item_card.watched")).toBeNull();
+  });
+
+  test("gives the corner to a badge, a download count say", async () => {
+    await renderArtwork({ watched: true, badgeLabel: "4" });
+
+    expect(screen.getByText("4")).toBeTruthy();
+    expect(screen.queryByLabelText("item_card.watched")).toBeNull();
+  });
+});

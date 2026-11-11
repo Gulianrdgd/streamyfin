@@ -21,6 +21,11 @@ export type CardData = {
   progress?: number;
   /** Unwatched movie or episode — draws the accent dot. */
   unwatched?: boolean;
+  /**
+   * Fully watched movie, episode, season, series or box set — draws the
+   * checkmark, so what is left to watch stands out from what is done.
+   */
+  watched?: boolean;
   /** Episodes left on a series/box set — draws the count badge when > 0. */
   unplayedCount?: number;
   /**
@@ -275,6 +280,9 @@ export function buildItemCards(
     const unwatched = isMovieOrEpisode(item) && item.UserData?.Played === false;
     const unplayedCount =
       isAggregate(item) && !item.UserData?.Played ? unplayed : 0;
+    const watched =
+      (isMovieOrEpisode(item) || isAggregate(item) || item.Type === "Season") &&
+      item.UserData?.Played === true;
     const dimmed = selectedId != null && item.Id !== selectedId;
     // Only portrait rows and grids mix in items without a poster.
     const aspectRatio =
@@ -288,6 +296,7 @@ export function buildItemCards(
         imageUrl,
         progress,
         unwatched,
+        watched,
         unplayedCount,
         live: isLiveBroadcast(item),
         dimmed,
