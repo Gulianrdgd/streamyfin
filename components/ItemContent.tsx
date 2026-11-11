@@ -46,6 +46,7 @@ import {
 import { getPlayingRunTimeTicks } from "@/utils/jellyfin/mediaSourceVersion";
 import { AddToFavorites } from "./AddToFavorites";
 import { AddToWatchlist } from "./AddToWatchlist";
+import { DeleteFromServerButton } from "./DeleteFromServerButton";
 import { ItemHeader } from "./ItemHeader";
 import { ItemTechnicalDetails } from "./ItemTechnicalDetails";
 import { PlayInRemoteSessionButton } from "./PlayInRemoteSession";
@@ -211,6 +212,7 @@ const ItemContentMobile: React.FC<ItemContentProps> = ({
                     !settings.hideWatchlistsTab && (
                       <AddToWatchlist item={item} />
                     )}
+                  {!isOffline && <DeleteFromServerButton item={item} />}
                 </>
               )}
             </HeaderButtonGroup>

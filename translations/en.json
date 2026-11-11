@@ -978,6 +978,25 @@
     "close": "Close chapters"
   },
   "item_card": {
+    "delete_from_server": {
+      "action": "Delete from server",
+      "delete_watched_episodes": "Delete watched episodes",
+      "delete_series": "Delete entire series",
+      "confirm_title": "Delete from server?",
+      "confirm_item": "\"{{name}}\" and its files will be permanently deleted from your Jellyfin server, for every user.",
+      "confirm_episodes_one": "{{count}} watched episode of \"{{name}}\" and its file will be permanently deleted from your Jellyfin server, for every user.",
+      "confirm_episodes_other": "{{count}} watched episodes of \"{{name}}\" and their files will be permanently deleted from your Jellyfin server, for every user.",
+      "confirm_episodes": "{{count}} watched episodes of \"{{name}}\" and their files will be permanently deleted from your Jellyfin server, for every user.",
+      "not_allowed": "Your Jellyfin account is not allowed to delete this item.",
+      "no_watched_episodes": "There are no watched episodes to delete.",
+      "deleted": "Deleted from the server",
+      "deleted_episodes_one": "Deleted {{count}} episode from the server",
+      "deleted_episodes_other": "Deleted {{count}} episodes from the server",
+      "deleted_episodes": "Deleted {{count}} episodes from the server",
+      "failed_one": "{{count}} item could not be deleted from the server",
+      "failed_other": "{{count}} items could not be deleted from the server",
+      "failed": "{{count}} items could not be deleted from the server"
+    },
     "next_up": "Next up",
     "no_items_to_display": "No items to display",
     "cast_and_crew": "Cast & crew",
