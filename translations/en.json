@@ -978,6 +978,7 @@
     "close": "Close chapters"
   },
   "item_card": {
+    "watched": "Watched",
     "next_up": "Next up",
     "no_items_to_display": "No items to display",
     "cast_and_crew": "Cast & crew",
