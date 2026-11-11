@@ -40,6 +40,7 @@ import {
   receiverNameFor,
 } from "@/utils/cast/jellyfinReceiver";
 import { castNotStartedMessage } from "@/utils/cast/receiverLoadErrorMessage";
+import { toReceiverSubtitleAppearance } from "@/utils/cast/receiverSubtitleAppearance";
 import { logAndCaptureError, writeErrorLog } from "@/utils/log";
 import type { PlayRequest } from "@/utils/nativePlayer/playRequest";
 import { formatDuration, runtimeTicksToMinutes } from "@/utils/time";
@@ -171,6 +172,8 @@ export const PlayButton: React.FC<Props> = ({
                           (await currentReceiverName()) ??
                           receiverNameFor(castDevice),
                         maxBitrate: selectedOptions.bitrate?.value,
+                        subtitleAppearance:
+                          toReceiverSubtitleAppearance(settings),
                       },
                       {
                         items: [item],
@@ -224,6 +227,7 @@ export const PlayButton: React.FC<Props> = ({
       selectedOptions,
       playMedia,
       isOffline,
+      settings,
       t,
     ],
   );

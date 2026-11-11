@@ -56,3 +56,28 @@ export const RECEIVER_STOP_GRACE_MS = 3_000;
  * Three missed reports keeps one late request from reading as a dead TV.
  */
 export const RECEIVER_LIVENESS_WINDOW_MS = 15_000;
+
+/**
+ * The text sizes the official receiver takes in `subtitleAppearance.textSize`,
+ * with the font scale it turns each into (jellyfin-chromecast's setTextTrack).
+ * The phone's subtitle size is a free scale, so a cast picks the nearest one.
+ */
+export const RECEIVER_SUBTITLE_SIZES = [
+  { textSize: "smaller", fontScale: 0.6 },
+  { textSize: "small", fontScale: 0.8 },
+  { textSize: "normal", fontScale: 1.0 },
+  { textSize: "large", fontScale: 1.15 },
+  { textSize: "larger", fontScale: 1.3 },
+  { textSize: "extralarge", fontScale: 1.45 },
+] as const;
+
+/**
+ * The phone's subtitle fonts the receiver can draw, as CSS font families. A
+ * font missing here (System, OpenDyslexic, which the Chromecast does not have)
+ * leaves the receiver's own font.
+ */
+export const RECEIVER_SUBTITLE_FONTS: Record<string, string> = {
+  "sans-serif": "sans-serif",
+  serif: "serif",
+  monospace: "monospace",
+};

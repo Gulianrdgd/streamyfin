@@ -191,6 +191,26 @@ describe("playOnJellyfinReceiver", () => {
     const [message] = lastChannel().sendMessage.mock.calls[0];
     expect(message).not.toHaveProperty("receiverName");
     expect(message).not.toHaveProperty("maxBitrate");
+    expect(message).not.toHaveProperty("subtitleAppearance");
+  });
+
+  test("hands the receiver the subtitle appearance, which it styles the TV's subtitles with", async () => {
+    const subtitleAppearance = {
+      dropShadow: "DROP_SHADOW" as const,
+      textColor: "#FFFF00",
+      textBackground: "transparent" as const,
+      textSize: "large" as const,
+    };
+
+    await playOnJellyfinReceiver(
+      { api: makeApi(), userId: "user-1", subtitleAppearance },
+      { items: [{ Id: "item-1", Type: "Movie" }], subtitleStreamIndex: 3 },
+    );
+
+    const [message] = lastChannel().sendMessage.mock.calls[0];
+    // Top level, not inside options: that is where the receiver reads it.
+    expect(message.subtitleAppearance).toEqual(subtitleAppearance);
+    expect(message.options).not.toHaveProperty("subtitleAppearance");
   });
 });
 
