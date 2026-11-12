@@ -4,6 +4,7 @@ import GoogleCast, {
   useCastDevice,
   useMediaStatus,
 } from "react-native-google-cast";
+import { useCastStatusResync } from "@/hooks/useCastStatusResync";
 import { apiAtom, userAtom } from "@/providers/JellyfinProvider";
 import {
   receiverNameFor,
@@ -21,8 +22,11 @@ interface LastCast {
 /**
  * Mounted once for the whole app: a cast can be stopped from the notification
  * or the native Cast dialog while no casting screen is open. Renders nothing.
+ * It also keeps the phone's view of the receiver current across a return to
+ * the foreground, which every casting screen reads.
  */
 export function JellyfinCastStopReporter() {
+  useCastStatusResync();
   const api = useAtomValue(apiAtom);
   const user = useAtomValue(userAtom);
   const castDevice = useCastDevice();
