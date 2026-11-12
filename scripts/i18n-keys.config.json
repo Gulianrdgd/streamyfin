@@ -63,6 +63,12 @@
     "seerr.quota.season_limit_total_one",
     "seerr.quota.season_limit_total_other",
     "seerr.request_card_seasons_one",
-    "seerr.request_card_seasons_other"
+    "seerr.request_card_seasons_other",
+    "item_card.delete_from_server.confirm_episodes_one",
+    "item_card.delete_from_server.confirm_episodes_other",
+    "item_card.delete_from_server.deleted_episodes_one",
+    "item_card.delete_from_server.deleted_episodes_other",
+    "item_card.delete_from_server.failed_one",
+    "item_card.delete_from_server.failed_other"
   ]
 }
