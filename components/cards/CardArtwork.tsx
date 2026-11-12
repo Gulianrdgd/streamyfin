@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { Image } from "@/components/common/ServerImage";
@@ -114,6 +115,26 @@ export const CardArtwork: React.FC<Props> = ({
           }}
         >
           <Text style={{ fontSize: 11, fontWeight: "700" }}>{badgeLabel}</Text>
+        </View>
+      ) : card.watched ? (
+        <View
+          accessible
+          accessibilityLabel={t("item_card.watched")}
+          style={{
+            position: "absolute",
+            top: 6,
+            right: 6,
+            width: 20,
+            height: 20,
+            borderRadius: 10,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(0,0,0,0.7)",
+            borderWidth: 1,
+            borderColor: Colors.primary,
+          }}
+        >
+          <Ionicons name='checkmark' size={13} color='white' />
         </View>
       ) : (
         card.unwatched && (
