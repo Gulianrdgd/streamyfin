@@ -6,6 +6,10 @@ import GoogleCast, {
 } from "react-native-google-cast";
 import { apiAtom, userAtom } from "@/providers/JellyfinProvider";
 import {
+  finishedReceiverPlayback,
+  receiverPlaybackKey,
+} from "@/utils/cast/finishedReceiverPlayback";
+import {
   receiverNameFor,
   toReceiverDeviceName,
 } from "@/utils/cast/jellyfinReceiver";
@@ -65,18 +69,8 @@ export function JellyfinCastStopReporter() {
     [api?.basePath, api?.accessToken, user?.Id, cancelPendingReport],
   );
 
-  useEffect(() => {
-    const sessionManager = GoogleCast.getSessionManager();
-
-    // A new cast on the same TV must not be stopped by a check left over from
-    // the previous session.
-    const starting = sessionManager.onSessionStarting(() =>
-      cancelPendingReport(),
-    );
-
-    const ending = sessionManager.onSessionEnded((_session, error) => {
-      const last = lastCast.current;
-      lastCast.current = {};
+  const startReport = useCallback(
+    (last: LastCast, receiverClosed: boolean) => {
       cancelPendingReport();
 
       if (!api?.accessToken || !user?.Id || !last.deviceName || !last.itemId) {
@@ -90,9 +84,7 @@ export function JellyfinCastStopReporter() {
         api,
         userId: user.Id,
         deviceName: last.deviceName,
-        // The SDK leaves `error` out only when casting was stopped, which
-        // closes the receiver app; anything else may leave the TV playing.
-        receiverClosed: !error,
+        receiverClosed,
         itemId: last.itemId,
         playSessionId: last.playSessionId,
         signal: controller.signal,
@@ -115,13 +107,51 @@ export function JellyfinCastStopReporter() {
             pendingReport.current = null;
           }
         });
+    },
+    [api, user, cancelPendingReport],
+  );
+
+  // The playback whose finish was last reported, so a status repeated on the
+  // next update does not report it again.
+  const reportedFinish = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    const finished = finishedReceiverPlayback(
+      mediaStatus,
+      lastCast.current,
+      reportedFinish.current,
+    );
+    if (!finished) return;
+
+    reportedFinish.current = receiverPlaybackKey(finished);
+    // The receiver is done with the item, so there is nothing to wait for: the
+    // check only finds the session if the server still has the item playing,
+    // and a stop the receiver did send leaves it with nothing to report.
+    startReport({ ...lastCast.current, ...finished }, true);
+  }, [mediaStatus, startReport]);
+
+  useEffect(() => {
+    const sessionManager = GoogleCast.getSessionManager();
+
+    // A new cast on the same TV must not be stopped by a check left over from
+    // the previous session.
+    const starting = sessionManager.onSessionStarting(() =>
+      cancelPendingReport(),
+    );
+
+    const ending = sessionManager.onSessionEnded((_session, error) => {
+      const last = lastCast.current;
+      lastCast.current = {};
+      // The SDK leaves `error` out only when casting was stopped, which
+      // closes the receiver app; anything else may leave the TV playing.
+      startReport(last, !error);
     });
 
     return () => {
       starting.remove();
       ending.remove();
     };
-  }, [api, user, cancelPendingReport]);
+  }, [cancelPendingReport, startReport]);
 
   return null;
 }
