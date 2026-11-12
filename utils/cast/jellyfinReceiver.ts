@@ -11,6 +11,7 @@ import {
   RECEIVER_FALLBACK_ID_LENGTH,
   RECEIVER_FALLBACK_NAME,
 } from "@/constants/Cast";
+import type { ReceiverSubtitleAppearance } from "./receiverSubtitleAppearance";
 
 /**
  * The official Jellyfin receiver (F007D354) speaks its own protocol over this
@@ -60,6 +61,11 @@ export interface JellyfinCastSession {
    */
   receiverName?: string;
   maxBitrate?: number;
+  /**
+   * How the receiver styles the subtitles it draws, from the phone's subtitle
+   * settings. Build it with `toReceiverSubtitleAppearance`.
+   */
+  subtitleAppearance?: ReceiverSubtitleAppearance;
 }
 
 export interface JellyfinCastPlayRequest {
@@ -267,6 +273,11 @@ export const sendJellyfinCastCommand = async (
     userId: session.userId,
     ...(session.receiverName ? { receiverName: session.receiverName } : {}),
     ...(session.maxBitrate ? { maxBitrate: session.maxBitrate } : {}),
+    // The receiver keeps the last appearance it was sent and applies it each
+    // time it turns a subtitle track on, the TV's own track menu included.
+    ...(session.subtitleAppearance
+      ? { subtitleAppearance: session.subtitleAppearance }
+      : {}),
     options,
   });
 };
